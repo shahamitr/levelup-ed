@@ -19,6 +19,9 @@ model User {
 
   sessions     Session[]
   achievements UserAchievement[]
+  certificates Certificate[]
+  bounties     UserBounty[]
+  capstones    UserCapstone[]
 
   // Gamification Fields
   streak            Int       @default(0)
@@ -26,8 +29,23 @@ model User {
   gems              Int       @default(0)
   streakFreezeCount Int       @default(0)
   weeklyXp          Int       @default(0)
+  dailyXpGoal       Int       @default(50)
+  dailyXpEarned     Int       @default(0)
   leagueId          Int?
   league            League?   @relation(fields: [leagueId], references: [id])
+
+  // Hearts/Lives System (Phase 2)
+  hearts            Int       @default(5)
+  maxHearts         Int       @default(5)
+  lastHeartRegen    DateTime  @default(now())
+
+  // Social Relations (Phase 2)
+  sentFriendRequests     Friendship[] @relation("FriendRequestsSent")
+  receivedFriendRequests Friendship[] @relation("FriendRequestsReceived")
+  challengesSent         Challenge[]  @relation("ChallengeSender")
+  challengesReceived     Challenge[]  @relation("ChallengeReceiver")
+  studyGroupMemberships  StudyGroupMember[]
+  ownedStudyGroups       StudyGroup[]  @relation("GroupOwner")
 }
 
 model League {
@@ -35,13 +53,17 @@ model League {
   name    String @unique // Bronze, Silver, Gold, Platinum, Diamond
   order   Int    // 1 for Bronze, 2 for Silver...
   users   User[]
+}
 
 model World {
-  id          Int      @id @default(autoincrement())
-  name        String
-  theme       String
-  description String?
-  topics      Topic[]
+  id           Int      @id @default(autoincrement())
+  name         String
+  theme        String
+  description  String?
+  topics       Topic[]
+  certificates Certificate[]
+  partners     WorldPartner[]
+  capstoneProjects CapstoneProject[]
 }
 
 model Topic {
@@ -62,6 +84,7 @@ model Question {
   difficulty    Int
   correctAnswer String
   options       Json
+  userAnswers   UserAnswer[]
 }
 
 model Session {
@@ -74,6 +97,7 @@ model Session {
   endTime      DateTime?
   focusAverage Float?
   aiActions    AiAction[]
+  userAnswers  UserAnswer[]
 }
 
 model AiAction {
@@ -166,4 +190,204 @@ model UserCapstone {
   status          String          // 'started', 'submitted', 'verified'
   submittedAt     DateTime?
   verifiedAt      DateTime?
+}
+
+// ============================================
+// CERTIFICATE & PARTNERSHIP SYSTEM
+// ============================================
+
+// University/Institution Partner
+model Partner {
+  id          String   @id @default(uuid())
+  name        String   // "Stanford University"
+  shortName   String   // "Stanford"
+  logoUrl     String
+  website     String?
+  tier        String   @default("standard") // "premier", "standard", "community"
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  worlds       WorldPartner[]
+  certificates Certificate[]
+}
+
+// Many-to-many: World can have multiple partners
+model WorldPartner {
+  worldId   Int
+  world     World   @relation(fields: [worldId], references: [id])
+  partnerId String
+  partner   Partner @relation(fields: [partnerId], references: [id])
+  isPrimary Boolean @default(false)
+
+  @@id([worldId, partnerId])
+}
+
+// Certificate issued to user
+model Certificate {
+  id                String    @id @default(uuid())
+  userId            String
+  user              User      @relation(fields: [userId], references: [id])
+  worldId           Int
+  world             World     @relation(fields: [worldId], references: [id])
+  partnerId         String?
+  partner           Partner?  @relation(fields: [partnerId], references: [id])
+
+  certificateNumber String    @unique // "LUE-2026-XXXXXX"
+  issueDate         DateTime  @default(now())
+  expiryDate        DateTime? // Optional for time-limited certs
+
+  // Verification
+  verificationHash  String    @unique // SHA256 for QR
+  status            String    @default("active") // "active", "revoked"
+
+  // Metadata
+  recipientName     String
+  courseName        String
+  skillsVerified    Json      // ["React", "TypeScript", "API Design"]
+  finalScore        Float?
+  hoursSpent        Float?
+}
+
+// ============================================
+// PHASE 2: ENGAGEMENT & SOCIAL FEATURES
+// ============================================
+
+// Friendship / Friend System
+model Friendship {
+  id          String   @id @default(uuid())
+  senderId    String
+  sender      User     @relation("FriendRequestsSent", fields: [senderId], references: [id])
+  receiverId  String
+  receiver    User     @relation("FriendRequestsReceived", fields: [receiverId], references: [id])
+  status      String   @default("pending") // "pending", "accepted", "declined"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([senderId, receiverId])
+}
+
+// PvP Interview Challenges
+model Challenge {
+  id            String   @id @default(uuid())
+  senderId      String
+  sender        User     @relation("ChallengeSender", fields: [senderId], references: [id])
+  receiverId    String
+  receiver      User     @relation("ChallengeReceiver", fields: [receiverId], references: [id])
+  worldId       Int?
+  topic         String    // Challenge topic/skill
+  status        String   @default("pending") // "pending", "accepted", "in_progress", "completed", "declined"
+
+  // Battle results
+  senderScore   Int?
+  receiverScore Int?
+  winnerId      String?
+
+  // Rewards
+  xpReward      Int      @default(100)
+  gemReward     Int      @default(10)
+
+  createdAt     DateTime @default(now())
+  startedAt     DateTime?
+  completedAt   DateTime?
+}
+
+// Study Groups / Cohort Learning
+model StudyGroup {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  topic       String   // e.g., "Frontend Engineering", "System Design"
+  ownerId     String
+  owner       User     @relation("GroupOwner", fields: [ownerId], references: [id])
+  maxMembers  Int      @default(10)
+  isPublic    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  members     StudyGroupMember[]
+  messages    GroupMessage[]
+}
+
+model StudyGroupMember {
+  id        String     @id @default(uuid())
+  groupId   String
+  group     StudyGroup @relation(fields: [groupId], references: [id])
+  userId    String
+  user      User       @relation(fields: [userId], references: [id])
+  role      String     @default("member") // "owner", "admin", "member"
+  joinedAt  DateTime   @default(now())
+
+  @@unique([groupId, userId])
+}
+
+model GroupMessage {
+  id        String     @id @default(uuid())
+  groupId   String
+  group     StudyGroup @relation(fields: [groupId], references: [id])
+  userId    String
+  username  String
+  content   String
+  createdAt DateTime   @default(now())
+}
+
+// ============================================
+// AI RESILIENCE MODELS
+// ============================================
+
+model CachedCourse {
+  id          String   @id @default(uuid())
+  topic       String   @unique
+  title       String
+  description String
+  difficulty  String   @default("beginner")
+  content     String   // JSON stringified lessons
+  accessCount Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  lessons     CachedLesson[]
+}
+
+model CachedLesson {
+  id        String       @id @default(uuid())
+  courseId  String
+  course    CachedCourse @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title     String
+  content   String
+  order     Int          @default(0)
+
+  questions CachedQuestion[]
+}
+
+model CachedQuestion {
+  id            String       @id @default(uuid())
+  lessonId      String
+  lesson        CachedLesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  question      String
+  options       String[]
+  correctAnswer Int
+  explanation   String
+}
+
+model AIUsageLog {
+  id           String   @id @default(uuid())
+  provider     String   // gemini, openai
+  tokensUsed   Int
+  endpoint     String   // course-gen, chat, boss-battle
+  userId       String?
+  success      Boolean  @default(true)
+  errorMessage String?
+  latencyMs    Int
+  createdAt    DateTime @default(now())
+
+  @@index([provider, createdAt])
+  @@index([userId, createdAt])
+}
+
+model AIQuotaAlert {
+  id           String   @id @default(uuid())
+  provider     String
+  threshold    Int      // 80, 90, 95, 99
+  percentUsed  Float
+  alertedAt    DateTime @default(now())
+  acknowledged Boolean  @default(false)
 }

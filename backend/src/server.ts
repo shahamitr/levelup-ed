@@ -4,37 +4,107 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
+
+// Security Middleware
+import { securityHeaders, errorHandler, securityLogger, sanitizeParams } from './middleware/security';
+import { rateLimit, rateLimitConfigs } from './middleware/rateLimit';
+import { getCsrfToken } from './middleware/csrf';
 
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    methods: ["GET", "POST"],
+    credentials: true
   }
 });
 
-
+// Route imports
 import authRoutes from './routes/auth.routes';
 import gameRoutes from './routes/game.routes';
 import aiRoutes from './routes/ai.routes';
+import certificateRoutes from './routes/certificate.routes';
+import partnerRoutes from './routes/partner.routes';
+import friendRoutes from './routes/friend.routes';
+import challengeRoutes from './routes/challenge.routes';
+import studyGroupRoutes from './routes/studygroup.routes';
+import heartsRoutes from './routes/hearts.routes';
 
-app.use(cors());
-app.use(express.json());
+// ============================================
+// SECURITY MIDDLEWARE STACK
+// ============================================
 
-// Routes
-app.use('/api/auth', authRoutes);
+// CORS with secure options
+app.use(cors({
+  origin: process.env.FRONTEND_URL || "http://localhost:5173",
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token', 'X-XSRF-TOKEN']
+}));
+
+// Security headers (helmet alternative)
+app.use(securityHeaders);
+
+// Cookie parser for CSRF
+app.use(cookieParser());
+
+// Body parsing with size limits
+app.use(express.json({ limit: '100kb' }));
+app.use(express.urlencoded({ extended: true, limit: '100kb' }));
+
+// Security logging
+app.use(securityLogger);
+
+// Sanitize URL parameters
+app.use(sanitizeParams);
+
+// Global rate limiting (100 req/min)
+app.use(rateLimit(rateLimitConfigs.api));
+
+// ============================================
+// CSRF TOKEN ENDPOINT
+// ============================================
+app.get('/api/csrf-token', getCsrfToken);
+
+// ============================================
+// ROUTES
+// ============================================
+
+// Auth routes with strict rate limiting
+app.use('/api/auth', rateLimit(rateLimitConfigs.auth), authRoutes);
+
+// Other routes
 app.use('/api/game', gameRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/certificates', certificateRoutes);
+app.use('/api/partners', partnerRoutes);
+app.use('/api/friends', friendRoutes);
+app.use('/api/challenges', challengeRoutes);
+app.use('/api/study-groups', studyGroupRoutes);
+app.use('/api/hearts', heartsRoutes);
 
-// Basic Health Check
-app.get('/health', (req, res) => {
+// Health Check
+app.get('/health', (req: express.Request, res: express.Response) => {
   res.json({ status: 'ok', timestamp: new Date() });
 });
 
-// Socket.io Connection
+// ============================================
+// ERROR HANDLING
+// ============================================
+app.use(errorHandler);
+
+// 404 Handler
+app.use((req: express.Request, res: express.Response) => {
+  res.status(404).json({ message: 'Endpoint not found' });
+});
+
+// ============================================
+// SOCKET.IO
+// ============================================
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
 
@@ -46,5 +116,6 @@ io.on('connection', (socket) => {
 const PORT = process.env.PORT || 3000;
 
 httpServer.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`🔒 Security middleware enabled`);
 });

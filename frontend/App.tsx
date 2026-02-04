@@ -15,11 +15,13 @@ import { StreakFlame } from './components/StreakFlame';
 import { ShopModal } from './components/ShopModal';
 import { LeagueLeaderboard } from './components/LeagueLeaderboard';
 import { ResumeView } from './components/ResumeView';
+import { CertificateView } from './components/CertificateView';
+import { DailyGoal } from './components/DailyGoal';
 import { playSound, decode, decodeAudioData } from './services/audioService';
 import { generateLessonContent, chatWithCoach, generateCoachSpeech, generateWorldFromTopic } from './services/geminiService';
 import { useNotification } from './contexts/NotificationContext';
 import { THEMES } from './constants/themes';
-import { LayoutDashboard, Map, Sword, Send, BrainCircuit, Menu, X, Volume2, ShieldCheck, Settings, Bell, Zap, Trophy, Activity, Sparkles, ArrowRight, AlertTriangle, RefreshCcw, Clock, RotateCcw, Power, Plus, Gem, FileText } from 'lucide-react';
+import { LayoutDashboard, Map, Sword, Send, BrainCircuit, Menu, X, Volume2, ShieldCheck, Settings, Bell, Zap, Trophy, Activity, Sparkles, ArrowRight, AlertTriangle, RefreshCcw, Clock, RotateCcw, Power, Plus, Gem, FileText, Award, Linkedin } from 'lucide-react';
 
 const App = () => {
   const [user, setUser] = useState<UserState>(() => {
@@ -61,6 +63,8 @@ const App = () => {
   // New Gamification State
   const [showShop, setShowShop] = useState(false);
   const [showResume, setShowResume] = useState(false);
+  const [showCertificate, setShowCertificate] = useState(false);
+  const [currentCertificate, setCurrentCertificate] = useState<any>(null);
 
   // Sync Gems and FreezeCount updates
   const handleBuyFreeze = () => {
@@ -759,6 +763,29 @@ const App = () => {
                   <span>BACK TO COURSES</span>
                   <ArrowRight size={32} />
                 </button>
+
+                {/* Certificate Button */}
+                <button
+                  onClick={() => {
+                    // Generate mock certificate data for demo
+                    const certData = {
+                      id: `cert-${Date.now()}`,
+                      certificateNumber: `LUE-2026-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
+                      recipientName: user.name,
+                      courseName: selectedWorld.name,
+                      issueDate: new Date().toISOString(),
+                      skills: lastVictoryStats.skills.map(s => s.name),
+                      verificationUrl: `${window.location.origin}/verify/demo`,
+                      partner: null
+                    };
+                    setCurrentCertificate(certData);
+                    setShowCertificate(true);
+                  }}
+                  className="w-full py-8 bg-slate-800 hover:bg-slate-700 text-white rounded-[2.5rem] font-bold text-xl uppercase tracking-widest border border-slate-700 transition-all hover:border-indigo-500/50 flex items-center justify-center space-x-4"
+                >
+                  <Award size={24} />
+                  <span>VIEW CERTIFICATE</span>
+                </button>
               </div>
             </div>
           </div>
@@ -857,6 +884,17 @@ const App = () => {
             </button>
             <ResumeView user={user} />
           </div>
+        )}
+
+        {/* Certificate Modal */}
+        {showCertificate && currentCertificate && (
+          <CertificateView
+            certificate={currentCertificate}
+            onClose={() => {
+              setShowCertificate(false);
+              setCurrentCertificate(null);
+            }}
+          />
         )}
       </main>
 
