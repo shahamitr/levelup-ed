@@ -3,7 +3,7 @@
 
 > **The Cybernetic Career Engine: Turn your technical upskilling into a high-stakes RPG.**
 
-![LevelUpED Banner](https://img.shields.io/badge/Powered%20By-Gemini%20Flash-blue?style=for-the-badge&logo=google-gemini)
+![LevelUpED Banner](https://img.shields.io/badge/Powered%20By-Gemini%203%20%7C%20Antigravity-blue?style=for-the-badge&logo=google-gemini)
 ![Tech Stack](https://img.shields.io/badge/Stack-React%20%7C%20Vite%20%7C%20Tailwind%20%7C%20Bun-purple?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Status-Hackathon%20Ready-green?style=for-the-badge)
 
@@ -11,7 +11,7 @@
 
 ## 🏆 Introduction
 
-**LevelUpED** transforms the lonely, static experience of learning to code into an immersive **Role-Playing Game**. Instead of boring quizzes, you face **AI Bosses** in voice-interactive interviews. The interface adapts to your subject (Chameleon UI), and the AI generates holographic diagrams on the fly to explain concepts.
+**LevelUpED** transforms the lonely, static experience of learning to code into an immersive **Role-Playing Game**. Instead of boring quizzes, you face **AI Bosses** in voice-interactive interviews. The interface adapts to your subject (Chameleon UI), and the **Antigravity Engine** generates holographic diagrams on the fly to explain concepts.
 
 Developed for the **Google Gemini Developer Competition** to solve the "Tutorial Hell" crisis.
 
@@ -22,12 +22,12 @@ Developed for the **Google Gemini Developer Competition** to solve the "Tutorial
 ### ⚔️ **AI Boss Battles (Voice-Enabled)**
 - Face off against "The Architect" or "The CISO".
 - **Voice Mode**: Speak your answers using your microphone.
-  - *Tech:* Web Speech API + Gemini 1.5/2.0 Flash for instant feedback.
+  - *Tech:* Web Speech API + **Gemini 3** for ultra-low latency.
 - **Real-time Judging**: The Boss deals "Health Damage" if your answer is vague, and learns from your precision.
 
 ### 🔮 **Instant Course Generator**
 - Want to learn something specific? Type "Quantum Computing" or "Svelte".
-- The AI generates a **full custom curriculum**, unique boss persona, and visual theme instantly.
+- The **Antigravity Engine** generates a **full custom curriculum**, unique boss persona, and visual theme instantly.
 
 ### 📽️ **Holographic Learning**
 - Don't just read about architecture.
@@ -49,7 +49,8 @@ Developed for the **Google Gemini Developer Competition** to solve the "Tutorial
 | **Frontend** | React 18, Vite, TailwindCSS, Framer Motion, Recharts |
 | **Backend** | Node.js (Bun Runtime), Express, TypeScript |
 | **Database** | PostgreSQL (Neon/Railway), Prisma ORM |
-| **AI Engine** | Google Gemini 1.5 Pro / 2.0 Flash (via Google GenAI SDK) |
+| **AI Engine** | **Google Gemini 3.0** (via Google GenAI SDK) |
+| **Intelligence** | **Antigravity Agentic Framework** |
 | **Voice** | Web Speech API |
 | **Diagrams** | Mermaid.js |
 
