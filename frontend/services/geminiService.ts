@@ -1,11 +1,8 @@
-
+import { getStaticLesson } from '../data/staticLessons';
 import { aiService } from './api';
 import { Message } from '../types';
 import { BOSS_SYSTEM_PROMPT, COACH_SYSTEM_PROMPT } from '../constants';
 
-/**
- * Generates a full lesson module using the backend AI proxy.
- */
 export const generateLessonContent = async (worldName: string, level: number): Promise<string> => {
   try {
     const prompt = `Act as a Cybernetic Career Architect.
@@ -23,9 +20,9 @@ export const generateLessonContent = async (worldName: string, level: number): P
     const response = await aiService.chat(prompt, [], "Lesson Generator");
     return response.data.reply;
   } catch (error) {
-    console.error("Lesson Gen Error:", error);
-    const msg = (error as any)?.response?.data?.details?.message || (error as any)?.message || "Unknown Error";
-    return `## Connection Lost\nServer says: ${msg}\nPlease retry.`;
+    console.error("Lesson Gen Error - Using Static Fallback:", error);
+    // Provide a rich static experience so the user doesn't feel the failure
+    return getStaticLesson(worldName);
   }
 };
 
