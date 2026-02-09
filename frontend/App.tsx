@@ -24,6 +24,7 @@ import { LessonView } from './components/LessonView';
 import { CelebrationModal } from './components/CelebrationModal';
 import { UserAvatarDropdown } from './components/UserAvatarDropdown';
 import { UserProfile } from './components/UserProfile';
+import { StudentHome } from './components/StudentHome';
 import { DailyLoginModal } from './components/DailyLoginModal';
 import { playSound, decode, decodeAudioData } from './services/audioService';
 import { generateLessonContent, chatWithCoach, generateCoachSpeech, generateWorldFromTopic } from './services/geminiService';
@@ -43,7 +44,8 @@ const App = () => {
     // Always start at landing unless deeply authenticated/session restored,
     // but for demo purposes, Landing is the best entry point.
     const saved = localStorage.getItem('leveluped_state_v1');
-    return saved ? ViewState.HOME : ViewState.LANDING;
+    const token = localStorage.getItem('token');
+    return (saved && token) ? ViewState.HOME : ViewState.LANDING;
   });
 
   const [selectedWorld, setSelectedWorld] = useState<World | null>(null);
@@ -198,6 +200,7 @@ const App = () => {
   };
 
   const handleLogout = () => {
+    localStorage.removeItem('token');
     localStorage.removeItem('leveluped_state_v1');
     setUser(INITIAL_USER_STATE);
     setView(ViewState.LANDING);
@@ -235,8 +238,9 @@ const App = () => {
   const [showDailyReward, setShowDailyReward] = useState(false);
 
   useEffect(() => {
-    // Only check on HOME or WORLD_MAP and if user is logged in
-    if ((view === ViewState.HOME || view === ViewState.WORLD_MAP) && user.name !== 'Incognito') {
+    // Only check on HOME or WORLD_MAP and if user is logged in (skip for Admin)
+    const isAdmin = user.name.toLowerCase().includes('admin');
+    if ((view === ViewState.HOME || view === ViewState.WORLD_MAP) && user.name !== 'Incognito' && !isAdmin) {
       const today = new Date().toDateString();
       const lastClaim = localStorage.getItem('leveluped_daily_claim');
 
@@ -506,28 +510,12 @@ const App = () => {
 
       case ViewState.HOME:
         return (
-          <div className="flex flex-col items-center justify-center h-full text-center space-y-12 p-10 bg-slate-950">
-            <div className="relative group">
-              <div className="bg-indigo-600/10 p-20 rounded-full ring-2 ring-indigo-500/20 group-hover:ring-indigo-500/60 transition-all duration-1000 animate-pulse">
-                <BrainCircuit size={160} className="text-indigo-500" />
-              </div>
-              <div className="absolute inset-0 bg-indigo-500/10 blur-[100px] rounded-full opacity-30"></div>
-            </div>
-            <div className="space-y-4">
-              <h1 className="text-7xl font-black tracking-tighter text-white uppercase italic drop-shadow-2xl">
-                LEVEL<span className="text-indigo-500">UP</span>ED
-              </h1>
-              <p className="text-indigo-400 font-mono text-xs tracking-[0.4em] uppercase font-bold">Career Acceleration Platform v5.0</p>
-              <p className="text-slate-500 font-mono text-[10px] tracking-widest uppercase">Welcome back, {user.name}</p>
-            </div>
-            <button
-              onClick={() => setView(ViewState.WORLD_MAP)}
-              className="px-12 py-6 bg-indigo-600 hover:bg-indigo-500 text-white rounded-3xl font-black text-2xl shadow-[0_0_100px_rgba(79,70,229,0.3)] transition-all transform hover:-translate-y-2 active:scale-95 group relative overflow-hidden"
-            >
-              <span className="relative z-10">RESUME TRAINING</span>
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-            </button>
-          </div>
+          <StudentHome
+            user={user}
+            courses={courses}
+            onNavigate={setView}
+            onStartLesson={startLesson}
+          />
         );
 
       case ViewState.WORLD_MAP:
@@ -655,10 +643,6 @@ const App = () => {
                 <Gem size={18} className="text-cyan-400 group-hover:animate-pulse" />
                 <span className="font-bold text-slate-300 group-hover:text-white">{user.gems}</span>
               </button>
-              <button onClick={() => setShowResume(true)} className="flex items-center space-x-2 bg-slate-900 border border-slate-700 px-4 py-2 rounded-full hover:border-purple-500 transition-colors group">
-                <FileText size={18} className="text-purple-400" />
-                <span className="font-bold text-xs uppercase tracking-widest text-slate-400 group-hover:text-white">CV</span>
-              </button>
               <div className="flex items-center space-x-2">
                 <StreakFlame streak={user.streak} />
               </div>
@@ -673,6 +657,7 @@ const App = () => {
               user={user}
               onNavigate={setView}
               onLogout={handleLogout}
+              onShowResume={() => setShowResume(true)}
             />
           </div>
         </header>

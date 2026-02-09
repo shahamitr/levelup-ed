@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, BrainCircuit, Users, TrendingUp, ShieldCheck, Zap, Award, Target, Code, Cpu, Globe, Rocket, CheckCircle, Menu, X, ChevronRight, Trophy } from 'lucide-react';
+import { ArrowRight, BrainCircuit, Users, TrendingUp, ShieldCheck, Zap, Award, Target, Code, Cpu, Globe, Rocket, CheckCircle, Menu, X, ChevronRight, Trophy, Briefcase, Star, MessageSquare, Building2, Quote } from 'lucide-react';
+import { PlatformShowcase } from './PlatformShowcase';
 
 interface LandingPageProps {
     onStart: () => void;
@@ -338,6 +339,127 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStart }) => {
                                 </div>
                                 <h3 className="text-xl font-black text-white mb-2 leading-tight group-hover:text-indigo-400 transition-colors">{path.title}</h3>
                                 <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">{path.count}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* AI Mentor Section */}
+            <section className="py-32 px-6 bg-slate-900/20" id="ai">
+                <div className="max-w-7xl mx-auto">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                        <div>
+                            <div className="inline-flex items-center space-x-2 bg-purple-500/10 border border-purple-500/20 rounded-full px-4 py-1.5 mb-8">
+                                <Zap className="text-purple-400" size={16} />
+                                <span className="text-purple-300 text-[10px] font-black tracking-[0.2em] uppercase">Powered by Gemini Pro</span>
+                            </div>
+                            <h2 className="text-5xl font-black text-white tracking-tighter mb-6 leading-tight">
+                                Meet Your New <br />
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">24/7 AI Mentor</span>
+                            </h2>
+                            <p className="text-slate-400 text-lg leading-relaxed mb-8">
+                                Stuck on a bug at 2 AM? Need a mock interview before your Google onsite? Your AI coach is always ready.
+                                It doesn't just give answers—it guides you to the solution, adapting to your learning style and pacing.
+                            </p>
+
+                            <div className="space-y-6">
+                                {[
+                                    { title: 'Real-time Code Analysis', desc: 'Instant feedback on complexity and style as you type.' },
+                                    { title: 'Socratic Debugging', desc: 'Guides you to find the root cause instead of fixing it for you.' },
+                                    { title: 'Personalized Curriculum', desc: 'Dynamically generates new modules based on your weak points.' }
+                                ].map((item, i) => (
+                                    <div key={i} className="flex items-start space-x-4">
+                                        <div className="bg-slate-800 p-2 rounded-lg mt-1">
+                                            <MessageSquare size={18} className="text-indigo-400" />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-white font-bold">{item.title}</h4>
+                                            <p className="text-slate-500 text-sm">{item.desc}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="relative">
+                            <PlatformShowcase />
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Enterprise Section */}
+            <section className="py-32 px-6 relative" id="enterprise">
+                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-5"></div>
+                <div className="max-w-7xl mx-auto relative z-10">
+                    <div className="text-center mb-20">
+                        <h2 className="text-indigo-500 font-mono text-xs font-black tracking-[0.3em] uppercase mb-4">For Teams</h2>
+                        <h3 className="text-5xl font-black text-white tracking-tighter uppercase italic">Enterprise Solutions</h3>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 rounded-[3rem] p-12 overflow-hidden relative">
+                        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/10 blur-[120px] rounded-full pointer-events-none"></div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center md:text-left">
+                            <div className="col-span-1 md:col-span-2 space-y-8">
+                                <h4 className="text-3xl font-bold text-white">Upskill your engineering team with data-driven precision.</h4>
+                                <p className="text-slate-400 text-lg">
+                                    Stop relying on generic video libraries. Give your team a platform that adapts to their skill gaps,
+                                    tracks their velocity, and proves ROI through measurable project outcomes.
+                                </p>
+                                <div className="flex flex-wrap gap-4 justify-center md:justify-start">
+                                    <button className="px-8 py-4 bg-white text-slate-950 rounded-xl font-bold hover:bg-indigo-50 transition-colors uppercase tracking-widest text-xs">
+                                        Book a Demo
+                                    </button>
+                                    <button className="px-8 py-4 bg-transparent border border-slate-700 text-white rounded-xl font-bold hover:bg-slate-800 transition-colors uppercase tracking-widest text-xs">
+                                        View Case Studies
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="space-y-6">
+                                <div className="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 hover:border-indigo-500/50 transition-colors">
+                                    <Building2 className="text-indigo-400 mb-4" size={28} />
+                                    <h5 className="text-white font-bold mb-2">Custom Learning Paths</h5>
+                                    <p className="text-slate-500 text-sm">Align curriculum with your tech stack and Q4 goals.</p>
+                                </div>
+                                <div className="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 hover:border-indigo-500/50 transition-colors">
+                                    <Users className="text-indigo-400 mb-4" size={28} />
+                                    <h5 className="text-white font-bold mb-2">Team Analytics</h5>
+                                    <p className="text-slate-500 text-sm">Track engagement, skill velocity, and project completion rates.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Success Stories Section */}
+            <section className="py-32 px-6 bg-slate-900/20" id="stories">
+                <div className="max-w-7xl mx-auto">
+                    <div className="text-center mb-20">
+                        <h2 className="text-indigo-500 font-mono text-xs font-black tracking-[0.3em] uppercase mb-4">Wall of Love</h2>
+                        <h3 className="text-5xl font-black text-white tracking-tighter uppercase italic">Success Stories</h3>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {[
+                            { name: "Sarah Chen", role: "Software Engineer at Google", text: "I was stuck in tutorial hell for years. LevelUpEd's AI mentor pushed me to build real projects. The mock interviews were harder than the real thing!", image: "https://i.pravatar.cc/150?u=sarah" },
+                            { name: "Marcus Johnson", role: "Frontend Lead at Vercel", text: "The gamification kept me addicted. I treated learning React like leveling up in an RPG. 6 months later, I doubled my salary.", image: "https://i.pravatar.cc/150?u=marcus" },
+                            { name: "Elena Rodriguez", role: "Full Stack Dev at Airbnb", text: "Traditional bootcamps cost $15k and move too slow. This platform adapted to my pace. The certification actually impressed my hiring manager.", image: "https://i.pravatar.cc/150?u=elena" }
+                        ].map((story, i) => (
+                            <div key={i} className="bg-slate-950 border border-slate-800 p-8 rounded-3xl relative hover:-translate-y-2 transition-transform">
+                                <Quote className="absolute top-8 right-8 text-slate-800" size={48} />
+                                <div className="flex items-center space-x-4 mb-6">
+                                    <img src={story.image} alt={story.name} className="w-12 h-12 rounded-full border-2 border-indigo-500/30" />
+                                    <div>
+                                        <h4 className="text-white font-bold text-sm">{story.name}</h4>
+                                        <p className="text-indigo-400 text-xs">{story.role}</p>
+                                    </div>
+                                </div>
+                                <p className="text-slate-400 leading-relaxed text-sm relative z-10">"{story.text}"</p>
+                                <div className="flex text-yellow-500 mt-6 space-x-1">
+                                    {[1, 2, 3, 4, 5].map(s => <Star key={s} size={14} fill="currentColor" />)}
+                                </div>
                             </div>
                         ))}
                     </div>

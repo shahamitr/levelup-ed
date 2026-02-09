@@ -11,16 +11,43 @@ interface DashboardProps {
 }
 
 export const Dashboard: React.FC<DashboardProps> = ({ user, courses }) => {
-  const chartData = courses.map(world => {
-    const completedCount = user.completedWorlds[world.id]?.length || 0;
-    return {
-      name: world.name.split(' ')[0],
-      xp: (completedCount * 500) + 100,
-      color: world.primaryColor.includes('blue') ? '#60a5fa' :
-        world.primaryColor.includes('green') ? '#4ade80' :
-          world.primaryColor.includes('red') ? '#f87171' : '#c084fc'
+  // Group courses by category for cleaner visualization
+  const categoryData = React.useMemo(() => {
+    const categories: Record<string, { xp: number, count: number, color: string }> = {
+      'Frontend': { xp: 0, count: 0, color: '#60a5fa' },
+      'Backend': { xp: 0, count: 0, color: '#4ade80' },
+      'Data/AI': { xp: 0, count: 0, color: '#c084fc' },
+      'Security': { xp: 0, count: 0, color: '#f87171' },
+      'Mobile': { xp: 0, count: 0, color: '#fbbf24' },
+      'Cloud': { xp: 0, count: 0, color: '#38bdf8' },
     };
-  });
+
+    courses.forEach(world => {
+      const completedCount = user.completedWorlds[world.id]?.length || 0;
+      const xp = (completedCount * 500); // 100 XP base is confusing, let's keep it to strictly progress
+
+      let cat = 'Other';
+      if (['Frontend', 'React', 'Angular', 'Vue', 'HTML', 'CSS', 'Tailwind', 'Bootstrap', 'UI/UX'].some(k => world.name.includes(k) || world.description.includes(k))) cat = 'Frontend';
+      else if (['Backend', 'Node', 'Java', 'PHP', 'Laravel', 'Django', 'Spring', 'Go', 'Rust', 'C#', '.NET'].some(k => world.name.includes(k))) cat = 'Backend';
+      else if (['Data', 'AI', 'Machine', 'SQL', 'Python', 'Excel', 'NumPy', 'Pandas', 'Statistics', 'R Prog'].some(k => world.name.includes(k))) cat = 'Data/AI';
+      else if (['Security', 'Cyber', 'SOC', 'Red Team'].some(k => world.name.includes(k))) cat = 'Security';
+      else if (['Mobile', 'iOS', 'Android', 'Flutter', 'Swift', 'Kotlin'].some(k => world.name.includes(k))) cat = 'Mobile';
+      else if (['Cloud', 'AWS', 'Azure', 'Docker', 'Kubernetes', 'DevOps'].some(k => world.name.includes(k))) cat = 'Cloud';
+
+      if (categories[cat]) {
+        categories[cat].xp += xp;
+        categories[cat].count += 1;
+      }
+    });
+
+    return Object.entries(categories)
+      .filter(([_, data]) => data.xp > 0 || data.count > 0) // Show categories even if 0 XP if they exist, but maybe better to show only if >0 for cleaner look? Let's show all for now to show breadth.
+      .map(([name, data]) => ({
+        name,
+        xp: data.xp,
+        color: data.color
+      }));
+  }, [courses, user.completedWorlds]);
 
   const radarData = [
     { subject: 'Logic', A: user.skillProfile.logic, fullMark: 100 },
@@ -138,11 +165,17 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, courses }) => {
           </h3>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData}>
-                <XAxis dataKey="name" stroke="#475569" fontSize={10} axisLine={false} tickLine={false} />
-                <YAxis hide />
-                <Bar dataKey="xp" radius={[15, 15, 0, 0]} barSize={50}>
-                  {chartData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
+              <BarChart data={categoryData}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1e293b" opacity={0.3} />
+                <XAxis dataKey="name" stroke="#94a3b8" fontSize={11} axisLine={false} tickLine={false} fontWeight="bold" />
+                <YAxis stroke="#475569" fontSize={10} axisLine={false} tickLine={false} />
+                <Tooltip
+                  cursor={{ fill: '#1e293b', opacity: 0.4 }}
+                  contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '12px', color: '#fff' }}
+                  formatter={(value: number) => [`${value} XP`, 'Experience']}
+                />
+                <Bar dataKey="xp" radius={[8, 8, 0, 0]} barSize={60}>
+                  {categoryData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>

@@ -4,8 +4,12 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "build": "bunx prisma generate",
+    "start": "bun run src/server.ts",
     "seed": "bun run prisma/seed.ts",
-    "dev": "bun run --watch src/server.ts"
+    "dev": "bun run --watch src/server.ts",
+    "db:push": "bunx prisma db push",
+    "db:seed": "bun run prisma/seed.ts"
   },
   "prisma": {
     "seed": "bun run prisma/seed.ts"

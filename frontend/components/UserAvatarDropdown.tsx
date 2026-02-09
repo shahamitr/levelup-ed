@@ -1,14 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { User, Settings, TrendingUp, Award, LogOut, ChevronDown } from 'lucide-react';
+import { User, Settings, TrendingUp, Award, LogOut, ChevronDown, FileText } from 'lucide-react';
 import { UserState, ViewState } from '../types';
 
 interface UserAvatarDropdownProps {
     user: UserState;
     onNavigate: (view: ViewState) => void;
     onLogout: () => void;
+    onShowResume?: () => void;
 }
 
-export const UserAvatarDropdown: React.FC<UserAvatarDropdownProps> = ({ user, onNavigate, onLogout }) => {
+export const UserAvatarDropdown: React.FC<UserAvatarDropdownProps> = ({ user, onNavigate, onLogout, onShowResume }) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -25,6 +26,7 @@ export const UserAvatarDropdown: React.FC<UserAvatarDropdownProps> = ({ user, on
 
     const menuItems = [
         { icon: User, label: 'My Profile', action: () => onNavigate(ViewState.USER_PROFILE) },
+        { icon: FileText, label: 'My Resume', action: () => onShowResume?.() },
         { icon: TrendingUp, label: 'My Progress', action: () => onNavigate(ViewState.DASHBOARD) },
         { icon: Award, label: 'Achievements', action: () => onNavigate(ViewState.DASHBOARD) },
         { icon: Settings, label: 'Settings', action: () => onNavigate(ViewState.ADMIN) },

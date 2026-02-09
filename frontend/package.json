@@ -1,12 +1,13 @@
 {
-  "name": "leveluped:-real-time-teacher-ai",
+  "name": "leveluped-real-time-teacher-ai",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "npx serve dist -s -l ${PORT:-3000}"
   },
   "dependencies": {
     "@google/genai": "^1.39.0",

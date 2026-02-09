@@ -15,10 +15,16 @@ import { getCsrfToken } from './middleware/csrf';
 
 const app = express();
 const httpServer = createServer(app);
+
+// Support multiple origins (comma-separated FRONTEND_URL)
+const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:5175')
+  .split(',')
+  .map((o: string) => o.trim());
+
 const io = new Server(httpServer, {
   cors: {
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
-    methods: ["GET", "POST"],
+    origin: allowedOrigins,
+    methods: ['GET', 'POST'],
     credentials: true
   }
 });
@@ -40,7 +46,7 @@ import heartsRoutes from './routes/hearts.routes';
 
 // CORS with secure options
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "http://localhost:5173",
+  origin: allowedOrigins,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token', 'X-XSRF-TOKEN']

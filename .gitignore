@@ -58,3 +58,9 @@ bun.lockb
 # Prisma
 /backend/prisma/migrations/
 /backend/prisma/generated/
+
+# System/Agent files
+.system_notes/
+.agent/
+tsc_output.txt
+build_output.txt

@@ -49,7 +49,7 @@ export const LessonView: React.FC<LessonViewProps> = ({
     setView,
     addNotification
 }) => {
-    const currentTheme = selectedWorld ? THEMES[selectedWorld.id] : THEMES[WorldId.AI];
+    const currentTheme = (selectedWorld && THEMES[selectedWorld.id]) ? THEMES[selectedWorld.id] : THEMES[WorldId.AI];
 
     return (
         <div className={`flex flex-col md:flex-row h-[calc(100vh-80px)] overflow-hidden relative transition-colors duration-700 ${currentTheme.colors.background} ${currentTheme.colors.text}`}>

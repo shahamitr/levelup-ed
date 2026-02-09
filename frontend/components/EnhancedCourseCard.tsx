@@ -35,102 +35,95 @@ export const EnhancedCourseCard: React.FC<EnhancedCourseCardProps> = ({
       relative group
       bg-slate-900/50 backdrop-blur-xl
       border-2 ${isLocked ? 'border-slate-800' : 'border-slate-700 hover:border-indigo-500/50'}
-      rounded-[2.5rem] p-8
+      rounded-[2rem] p-6 h-full flex flex-col
       transition-all duration-300
       ${isLocked ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02] hover:shadow-[0_0_60px_rgba(79,70,229,0.3)] cursor-pointer'}
     `}>
             {/* Lock Overlay */}
             {isLocked && (
-                <div className="absolute inset-0 flex items-center justify-center z-10 bg-black/40 backdrop-blur-sm rounded-[2.5rem]">
+                <div className="absolute inset-0 flex items-center justify-center z-10 bg-black/40 backdrop-blur-sm rounded-[2rem]">
                     <div className="flex flex-col items-center space-y-4">
-                        <div className="p-6 bg-slate-800 rounded-full">
-                            <Lock size={48} className="text-slate-500" />
+                        <div className="p-4 bg-slate-800 rounded-full">
+                            <Lock size={32} className="text-slate-500" />
                         </div>
-                        <p className="text-slate-400 font-bold uppercase text-sm tracking-wider">Complete Previous Course</p>
+                        <p className="text-slate-400 font-bold uppercase text-xs tracking-wider">Locked</p>
                     </div>
                 </div>
             )}
 
-            {/* Progress Ring */}
-            <div className="absolute -top-6 -right-6">
-                <svg className="w-24 h-24 transform -rotate-90">
-                    <circle
-                        cx="48"
-                        cy="48"
-                        r="42"
-                        stroke="currentColor"
-                        strokeWidth="8"
-                        fill="none"
-                        className="text-slate-800"
-                    />
-                    <circle
-                        cx="48"
-                        cy="48"
-                        r="42"
-                        stroke="currentColor"
-                        strokeWidth="8"
-                        fill="none"
-                        strokeDasharray={`${2 * Math.PI * 42}`}
-                        strokeDashoffset={`${2 * Math.PI * 42 * (1 - progress / 100)}`}
-                        className={`${isCompleted ? 'text-green-500' : 'text-indigo-500'} transition-all duration-1000`}
-                        strokeLinecap="round"
-                    />
-                </svg>
-                <div className="absolute inset-0 flex items-center justify-center">
-                    {isCompleted ? (
-                        <CheckCircle2 size={32} className="text-green-500" />
-                    ) : (
-                        <span className="text-sm font-black text-white">{Math.round(progress)}%</span>
-                    )}
+            {/* Progress Ring - Compact */}
+            <div className="absolute top-4 right-4 z-10">
+                <div className="relative w-16 h-16">
+                    <svg className="w-full h-full transform -rotate-90">
+                        <circle
+                            cx="32"
+                            cy="32"
+                            r="28"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                            fill="none"
+                            className="text-slate-800"
+                        />
+                        <circle
+                            cx="32"
+                            cy="32"
+                            r="28"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                            fill="none"
+                            strokeDasharray={`${2 * Math.PI * 28}`}
+                            strokeDashoffset={`${2 * Math.PI * 28 * (1 - progress / 100)}`}
+                            className={`${isCompleted ? 'text-green-500' : 'text-indigo-500'} transition-all duration-1000`}
+                            strokeLinecap="round"
+                        />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                        {isCompleted ? (
+                            <CheckCircle2 size={20} className="text-green-500" />
+                        ) : (
+                            <span className="text-xs font-black text-white">{Math.round(progress)}%</span>
+                        )}
+                    </div>
                 </div>
             </div>
 
             {/* Course Content */}
-            <div className="space-y-6 relative z-0">
+            <div className="space-y-4 relative z-0 flex-1 flex flex-col justify-between mt-2">
                 {/* Header */}
-                <div>
-                    <div className="flex items-center justify-between mb-3">
-                        <h2 className="text-3xl font-black text-white tracking-tight">{world.name}</h2>
-                        <div className={`px-3 py-1 rounded-full bg-gradient-to-r ${difficulty.color} text-white text-xs font-bold uppercase`}>
+                <div className="pr-16">
+                    <div className="flex flex-col items-start mb-2">
+                        <div className={`px-2 py-0.5 rounded-full bg-gradient-to-r ${difficulty.color} text-white text-[10px] font-bold uppercase mb-2`}>
                             {difficulty.label}
                         </div>
+                        <h2 className="text-2xl font-black text-white tracking-tight leading-tight min-h-[3rem]">{world.name}</h2>
                     </div>
-                    <p className="text-slate-400 text-sm leading-relaxed">{world.description}</p>
+                    <p className="text-slate-400 text-xs leading-relaxed line-clamp-2 min-h-[2.5em]">{world.description}</p>
                 </div>
 
                 {/* Stats */}
-                <div className="grid grid-cols-3 gap-4">
-                    <div className="flex items-center space-x-3 p-3 bg-slate-800/50 rounded-2xl">
-                        <Clock size={20} className="text-indigo-400" />
-                        <div>
-                            <p className="text-[10px] text-slate-500 uppercase tracking-wider">Duration</p>
-                            <p className="text-sm font-bold text-white">{world.totalLevels * 30}min</p>
-                        </div>
+                <div className="grid grid-cols-3 gap-2">
+                    <div className="flex flex-col items-center justify-center p-2 bg-slate-800/30 rounded-xl border border-slate-700/30">
+                        <Clock size={14} className="text-indigo-400 mb-1" />
+                        <p className="text-[10px] font-bold text-white">{world.totalLevels * 30}m</p>
                     </div>
-                    <div className="flex items-center space-x-3 p-3 bg-slate-800/50 rounded-2xl">
-                        <TrendingUp size={20} className="text-green-400" />
-                        <div>
-                            <p className="text-[10px] text-slate-500 uppercase tracking-wider">Modules</p>
-                            <p className="text-sm font-bold text-white">{world.totalLevels}</p>
-                        </div>
+                    <div className="flex flex-col items-center justify-center p-2 bg-slate-800/30 rounded-xl border border-slate-700/30">
+                        <TrendingUp size={14} className="text-green-400 mb-1" />
+                        <p className="text-[10px] font-bold text-white">{world.totalLevels} Mods</p>
                     </div>
-                    <div className="flex items-center space-x-3 p-3 bg-slate-800/50 rounded-2xl">
-                        <Trophy size={20} className="text-yellow-400" />
-                        <div>
-                            <p className="text-[10px] text-slate-500 uppercase tracking-wider">XP</p>
-                            <p className="text-sm font-bold text-white">{world.totalLevels * 500}</p>
-                        </div>
+                    <div className="flex flex-col items-center justify-center p-2 bg-slate-800/30 rounded-xl border border-slate-700/30">
+                        <Trophy size={14} className="text-yellow-400 mb-1" />
+                        <p className="text-[10px] font-bold text-white">{world.totalLevels * 500} XP</p>
                     </div>
                 </div>
 
-                {/* Progress Bar */}
+                {/* Progress Bar (Compact) */}
                 {isInProgress && (
-                    <div>
-                        <div className="flex justify-between text-xs text-slate-400 mb-2">
-                            <span>PROGRESS</span>
-                            <span>{completedLevels.length} / {world.totalLevels} Modules</span>
+                    <div className="pt-2">
+                        <div className="flex justify-between text-[10px] text-slate-500 mb-1 uppercase tracking-wider">
+                            <span>Progress</span>
+                            <span>{completedLevels.length}/{world.totalLevels}</span>
                         </div>
-                        <div className="h-3 bg-slate-800 rounded-full overflow-hidden">
+                        <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
                             <div
                                 className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-700"
                                 style={{ width: `${progress}%` }}
@@ -140,12 +133,12 @@ export const EnhancedCourseCard: React.FC<EnhancedCourseCardProps> = ({
                 )}
 
                 {/* Action Buttons */}
-                <div className="flex space-x-3">
+                <div className="flex space-x-2 pt-2">
                     <button
                         onClick={onStart}
                         disabled={isLocked}
                         className={`
-                            flex-1 py-4 px-6 rounded-2xl font-black uppercase tracking-wider text-sm
+                            flex-1 py-3 px-4 rounded-xl font-black uppercase tracking-wider text-xs
                             transition-all duration-300
                             ${isLocked
                                 ? 'bg-slate-800 text-slate-600 cursor-not-allowed'
@@ -157,16 +150,16 @@ export const EnhancedCourseCard: React.FC<EnhancedCourseCardProps> = ({
                             }
                         `}
                     >
-                        {isCompleted ? '✓ Review Course' : isInProgress ? 'Continue Learning' : 'Start Course'}
+                        {isCompleted ? 'Recap' : isInProgress ? 'Continue' : 'Start'}
                     </button>
 
                     {(isCompleted || progress > 80) && onBossFight && (
                         <button
                             onClick={onBossFight}
-                            className="p-4 rounded-2xl bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-600/20 hover:shadow-red-500/40 transition-all flex items-center justify-center group"
+                            className="p-3 rounded-xl bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-600/20 hover:shadow-red-500/40 transition-all flex items-center justify-center group"
                             title="Challenge Boss"
                         >
-                            <Swords size={24} className="group-hover:animate-pulse" />
+                            <Swords size={18} className="group-hover:animate-pulse" />
                         </button>
                     )}
                 </div>
@@ -174,8 +167,8 @@ export const EnhancedCourseCard: React.FC<EnhancedCourseCardProps> = ({
 
             {/* Completion Badge */}
             {isCompleted && (
-                <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2">
-                    <div className="px-6 py-2 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full text-white text-xs font-black uppercase shadow-lg">
+                <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2">
+                    <div className="px-4 py-1 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full text-white text-[10px] font-black uppercase shadow-lg whitespace-nowrap border-2 border-slate-900">
                         🏆 Mastered
                     </div>
                 </div>
