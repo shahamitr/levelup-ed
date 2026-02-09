@@ -29,6 +29,7 @@ import { DailyLoginModal } from './components/DailyLoginModal';
 import { FriendsList } from './components/FriendsList';
 import { StudyGroupList } from './components/StudyGroupList';
 import { HeartsCompact } from './components/HeartsDisplay';
+import { CareerAnalysisModal } from './components/CareerAnalysisModal';
 import { playSound, decode, decodeAudioData } from './services/audioService';
 import { generateLessonContent, chatWithCoach, generateCoachSpeech, generateWorldFromTopic } from './services/geminiService';
 import { useNotification } from './contexts/NotificationContext';
@@ -85,6 +86,7 @@ const App = () => {
   const [showFriends, setShowFriends] = useState(false);
   const [showGroups, setShowGroups] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const [showCareerModal, setShowCareerModal] = useState(false);
 
   // Sync Gems and FreezeCount updates
   const handleBuyFreeze = () => {
@@ -639,11 +641,12 @@ const App = () => {
           <nav className="hidden lg:flex items-center space-x-20">
             {[
               { name: 'Courses', view: ViewState.WORLD_MAP, icon: Map },
-              { name: 'Analytics', view: ViewState.DASHBOARD, icon: LayoutDashboard }
+              { name: 'Analytics', view: ViewState.DASHBOARD, icon: LayoutDashboard },
+              { name: 'Career Pulse', view: 'CAREER_MODAL', icon: BrainCircuit }
             ].map(item => (
               <button
-                key={item.view}
-                onClick={() => setView(item.view)}
+                key={item.name}
+                onClick={() => item.view === 'CAREER_MODAL' ? setShowCareerModal(true) : setView(item.view as ViewState)}
                 className={`flex items-center space-x-4 font-black text-xs tracking-[0.4em] hover:text-indigo-400 transition-colors uppercase ${view === item.view ? 'text-indigo-400' : 'text-slate-500'}`}
               >
                 <item.icon size={20} /> <span>{item.name}</span>
@@ -773,6 +776,24 @@ const App = () => {
               />
             </div>
           </div>
+        )}
+        {showCareerModal && (
+          <CareerAnalysisModal
+            onClose={() => setShowCareerModal(false)}
+            onStartCourse={async (topic) => {
+              setShowCareerModal(false);
+              addNotification("Generating Custom Curriculum...", "info");
+              const newWorld = await generateWorldFromTopic(topic);
+              if (newWorld) {
+                setCourses(prev => [...prev, newWorld]);
+                addNotification(`Course "${newWorld.name}" Created!`, "success");
+                setSelectedWorld(newWorld);
+                setView(ViewState.LESSON); // Should ideally show map or start lesson
+              } else {
+                addNotification("Failed to generate course. Try again.", "error");
+              }
+            }}
+          />
         )}
       </main>
 
