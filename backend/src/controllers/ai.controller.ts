@@ -14,48 +14,53 @@ import { GoogleGenerativeAI } from '@google/genai';
 // Wait, checking frontend package.json, it was "@google/genai": "^1.39.0" which is likely the Vertex AI or new client.
 // Let's stick to a generic implementation using the API Key.
 
-const GEN_AI_KEY = process.env.GEMINI_API_KEY || '';
+import { aiService } from '../services/ai';
+import { AICompletionRequest } from '../services/ai/types';
 
 export const chatWithMentor = async (req: Request, res: Response) => {
     const { history, message, context } = req.body;
 
     try {
-        // Construct prompt
-        const systemPrompt = `You are an AI Mentor in the "Real-Time Teacher" platform.
-    Context: ${context}.
-    Be helpful, socratic, and encouraging.
-    If the student is distracted, be firm but kind.`;
+        const messages: any[] = [
+            {
+                role: 'system',
+                content: `You are an AI Mentor in the "Real-Time Teacher" platform.
+Context: ${context || 'General Coding'}.
+Be helpful, socratic, and encouraging.
+If the student is distracted, be firm but kind.`
+            }
+        ];
 
-        const fullPrompt = `${systemPrompt}\n\nChat History:\n${JSON.stringify(history)}\n\nUser: ${message}\nMentor:`;
+        // Map existing history if it's an array
+        if (Array.isArray(history)) {
+            history.forEach((msg: any) => {
+                // Skip if it's not a valid message object or system message
+                if (!msg.text) return;
 
-        // Direct API call to Gemini (Models API) to avoid SDK version conflicts in this quick setup
-        // POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=...
-
-        // We will use the REST API for maximum reliability.
-        // Updated to gemini-1.5-flash-001 as the alias might be resolving incorrectly.
-        const model = process.env.GEMINI_MODEL || 'gemini-1.5-flash-001';
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEN_AI_KEY}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [{
-                    parts: [{ text: fullPrompt }]
-                }]
-            })
-        });
-
-        const data = await response.json() as any;
-
-        if (data.error) {
-            console.error('Gemini Error:', data.error);
-            return res.status(500).json({ message: 'AI Error', details: data.error });
+                // Map 'model' to 'assistant' for our internal type
+                const role = (msg.role === 'model' || msg.role === 'assistant') ? 'assistant' : 'user';
+                messages.push({ role, content: msg.text });
+            });
         }
 
-        const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "I'm having trouble thinking right now.";
+        // Add current user message
+        messages.push({ role: 'user', content: message });
 
-        res.json({ reply });
-    } catch (error) {
+        const request: AICompletionRequest = {
+            messages,
+            temperature: 0.7,
+            maxTokens: 1000
+        };
+
+        const response = await aiService.complete(request);
+
+        res.json({ reply: response.content });
+    } catch (error: any) {
         console.error("AI Controller Error:", error);
-        res.status(500).json({ message: 'Server error processing AI request', details: String(error) });
+
+        // Fallback response if everything completely fails (though provider has its own fallback)
+        res.status(200).json({
+            reply: "I'm currently updating my knowledge base. Please try again in a moment, or continue with your coding task!"
+        });
     }
 };

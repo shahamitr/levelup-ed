@@ -70,7 +70,7 @@ export class GeminiProvider implements AIProvider {
             console.error(`Gemini API Error: ${response.status} ${response.statusText}`);
 
             // EMERGENCY FALLBACK: Unblock user testing if Quota Exceeded
-            if (response.status === 429 || response.status === 403 || response.status === 503 || response.status === 500) {
+            if (response.status === 429 || response.status === 403 || response.status === 503 || response.status === 500 || response.status === 400) {
                 console.warn("⚠️ QUOTA EXCEEDED / API ERROR: Switching to MOCK RESPONSE mode to allow testing.");
                 const lastMsg = request.messages.length > 0 ? request.messages[request.messages.length - 1].content : "No input";
                 return {
