@@ -26,6 +26,9 @@ import { UserAvatarDropdown } from './components/UserAvatarDropdown';
 import { UserProfile } from './components/UserProfile';
 import { StudentHome } from './components/StudentHome';
 import { DailyLoginModal } from './components/DailyLoginModal';
+import { FriendsList } from './components/FriendsList';
+import { StudyGroupList } from './components/StudyGroupList';
+import { HeartsCompact } from './components/HeartsDisplay';
 import { playSound, decode, decodeAudioData } from './services/audioService';
 import { generateLessonContent, chatWithCoach, generateCoachSpeech, generateWorldFromTopic } from './services/geminiService';
 import { useNotification } from './contexts/NotificationContext';
@@ -77,6 +80,11 @@ const App = () => {
   const [showResume, setShowResume] = useState(false);
   const [showCertificate, setShowCertificate] = useState(false);
   const [currentCertificate, setCurrentCertificate] = useState<any>(null);
+
+  // Social Modals State
+  const [showFriends, setShowFriends] = useState(false);
+  const [showGroups, setShowGroups] = useState(false);
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
 
   // Sync Gems and FreezeCount updates
   const handleBuyFreeze = () => {
@@ -443,6 +451,24 @@ const App = () => {
     const masteryBonus = masteryAwarded ? 2500 : 0;
     const xpGained = levelXp + masteryBonus;
 
+    // Trigger Certificate if Mastery Awarded
+    if (masteryAwarded) {
+      setTimeout(() => {
+        setCurrentCertificate({
+          id: `cert-${Date.now()}`,
+          recipientName: user.name,
+          courseName: selectedWorld.name,
+          issueDate: new Date().toLocaleDateString(),
+          skills: [selectedWorld.name, 'Problem Solving', 'Critical Thinking'],
+          certificateNumber: `LUE-${Math.floor(Math.random() * 100000)}`,
+          verificationUrl: `https://levelup-ed.com/verify/${Date.now()}`
+        });
+        setShowCertificate(true);
+        addNotification("CERTIFICATE EARNED! Check your profile.", 'success');
+        playSound('levelUp');
+      }, 2000);
+    }
+
     const finalXp = user.xp + xpGained;
     const newLevel = Math.floor(finalXp / 1000) + 1;
     const rankUp = newLevel > user.level;
@@ -629,6 +655,7 @@ const App = () => {
 
             {/* Gamification HUD */}
             <div className="flex items-center space-x-6 mr-8">
+              <HeartsCompact hearts={user.hearts} maxHearts={user.maxHearts} onClick={() => setShowShop(true)} />
               <button onClick={() => setShowShop(true)} className="flex items-center space-x-2 bg-slate-900 border border-slate-700 px-4 py-2 rounded-full hover:border-cyan-500 transition-colors group">
                 <Gem size={18} className="text-cyan-400 group-hover:animate-pulse" />
                 <span className="font-bold text-slate-300 group-hover:text-white">{user.gems}</span>
@@ -648,6 +675,9 @@ const App = () => {
               onNavigate={setView}
               onLogout={handleLogout}
               onShowResume={() => setShowResume(true)}
+              onShowFriends={() => setShowFriends(true)}
+              onShowGroups={() => setShowGroups(true)}
+              onShowLeaderboard={() => setShowLeaderboard(true)}
             />
           </div>
         </header>
@@ -693,6 +723,56 @@ const App = () => {
               setCurrentCertificate(null);
             }}
           />
+        )}
+
+        {/* SOCIAL MODALS */}
+        {showFriends && (
+          <FriendsList
+            friends={[
+              { id: 'f1', username: 'SarahCoder', level: 5, xp: 4500 },
+              { id: 'f2', username: 'DevDave', level: 3, xp: 2800 },
+              { id: 'f3', username: 'AlgoMaster', level: 8, xp: 7800 }
+            ]}
+            pendingRequests={[]}
+            onClose={() => setShowFriends(false)}
+            onSendRequest={() => addNotification('Request Sent!', 'success')}
+            onAcceptRequest={() => { }}
+            onDeclineRequest={() => { }}
+            onChallenge={() => addNotification('Challenge feature coming soon!', 'info')}
+            onSearch={async () => []}
+          />
+        )}
+
+        {showGroups && (
+          <StudyGroupList
+            groups={[
+              { id: 'g1', name: 'React Learners', topic: 'Frontend', members: 12, maxMembers: 20, owner: { username: 'SarahCoder' }, username: 'SarahCoder', _count: { members: 12 } },
+              { id: 'g2', name: 'Python Pythons', topic: 'Data Science', members: 8, maxMembers: 15, owner: { username: 'DevDave' }, username: 'DevDave', _count: { members: 8 } }
+            ]}
+            myGroups={[]}
+            onJoinGroup={() => addNotification('Joined group!', 'success')}
+            onLeaveGroup={() => { }}
+            onCreateGroup={() => addNotification('Group created!', 'success')}
+            onOpenGroup={() => { }}
+            onClose={() => setShowGroups(false)}
+          />
+        )}
+
+        {showLeaderboard && (
+          <div className="fixed inset-0 z-[100] bg-slate-950/90 backdrop-blur-xl flex items-center justify-center p-4 animate-in fade-in" onClick={() => setShowLeaderboard(false)}>
+            <div onClick={e => e.stopPropagation()}>
+              <LeagueLeaderboard
+                leagueName="Gold"
+                users={[
+                  { id: 'u1', username: 'CodeNinja', xp: 15000, rank: 1 },
+                  { id: 'u2', username: 'ByteWizard', xp: 14200, rank: 2 },
+                  { id: 'u3', username: 'ReactGuru', xp: 13800, rank: 3 },
+                  { id: 'me', username: user.name, xp: user.xp, rank: 12, isCurrentUser: true },
+                  { id: 'u4', username: 'JavaJedi', xp: 12000, rank: 4 }
+                ]}
+              />
+            </div>
+          </div>
         )}
       </main>
 

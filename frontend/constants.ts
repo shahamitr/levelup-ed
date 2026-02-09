@@ -882,27 +882,33 @@ export const MASTER_ACHIEVEMENTS: Achievement[] = [
 
 export const INITIAL_USER_STATE: UserState = {
   name: "Student",
-  xp: 0,
-  level: 1,
-  streak: 1,
-  completedWorlds: {},
+  xp: 2750,
+  level: 3,
+  streak: 5,
+  completedWorlds: {
+    [WorldId.WEB]: [1, 2, 3],
+    [WorldId.DATA]: [1],
+  },
   inventory: [
-    { id: 'a1', name: 'Starter Laptop', description: 'Standard issue dev machine.', rarity: 'Common', statBoost: { skill: 'logic', value: 5 } }
+    { id: 'a1', name: 'Starter Laptop', description: 'Standard issue dev machine.', rarity: 'Common', statBoost: { skill: 'logic', value: 5 } },
+    { id: 'a2', name: 'Debug Goggles', description: 'See through bugs instantly.', rarity: 'Rare', statBoost: { skill: 'syntax', value: 10 } }
   ],
   skillProfile: {
-    logic: 10,
-    architecture: 5,
-    syntax: 15,
-    security: 5
+    logic: 45,
+    architecture: 25,
+    syntax: 55,
+    security: 15
   },
   focusScore: 92,
   focusHistory: Array.from({ length: 15 }, (_, i) => ({ time: `${i}:00`, score: 80 + Math.random() * 20 })),
   lastActive: Date.now(),
   bounties: INITIAL_BOUNTIES,
-  achievements: [],
+  achievements: ['first_lesson', 'streak_3'],
   milestones: [],
-  gems: 0,
-  freezeCount: 0
+  gems: 120,
+  freezeCount: 0,
+  hearts: 5,
+  maxHearts: 5
 };
 
 export const COACH_SYSTEM_PROMPT = `You are the LevelUpED AI Career Mentor.

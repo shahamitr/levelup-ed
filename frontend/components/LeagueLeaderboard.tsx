@@ -1,13 +1,7 @@
 import React from 'react';
 import { Shield, Trophy, ArrowUp, ArrowDown, User } from 'lucide-react';
 
-interface LeagueUser {
-    id: string;
-    username: string;
-    xp: number;
-    rank: number;
-    isCurrentUser?: boolean;
-}
+import { LeagueUser } from '../types';
 
 interface LeagueLeaderboardProps {
     leagueName: string;

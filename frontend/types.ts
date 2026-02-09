@@ -206,6 +206,8 @@ export interface UserState {
   milestones: string[]; // IDs of unlocked milestones
   gems: number;
   freezeCount: number;
+  hearts: number;
+  maxHearts: number;
 }
 
 export interface BossState {

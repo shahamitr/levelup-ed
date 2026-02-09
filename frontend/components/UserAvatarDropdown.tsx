@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { User, Settings, TrendingUp, Award, LogOut, ChevronDown, FileText } from 'lucide-react';
+import { User, Settings, TrendingUp, Award, LogOut, ChevronDown, FileText, Users, MessageCircle, Trophy } from 'lucide-react';
 import { UserState, ViewState } from '../types';
 
 interface UserAvatarDropdownProps {
@@ -7,9 +7,15 @@ interface UserAvatarDropdownProps {
     onNavigate: (view: ViewState) => void;
     onLogout: () => void;
     onShowResume?: () => void;
+    onShowFriends?: () => void;
+    onShowGroups?: () => void;
+    onShowLeaderboard?: () => void;
 }
 
-export const UserAvatarDropdown: React.FC<UserAvatarDropdownProps> = ({ user, onNavigate, onLogout, onShowResume }) => {
+export const UserAvatarDropdown: React.FC<UserAvatarDropdownProps> = ({
+    user, onNavigate, onLogout, onShowResume,
+    onShowFriends, onShowGroups, onShowLeaderboard
+}) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -26,9 +32,11 @@ export const UserAvatarDropdown: React.FC<UserAvatarDropdownProps> = ({ user, on
 
     const menuItems = [
         { icon: User, label: 'My Profile', action: () => onNavigate(ViewState.USER_PROFILE) },
+        { icon: Users, label: 'My Squad', action: () => onShowFriends?.() },
+        { icon: MessageCircle, label: 'Study Groups', action: () => onShowGroups?.() },
+        { icon: Trophy, label: 'Leaderboard', action: () => onShowLeaderboard?.() },
         { icon: FileText, label: 'My Resume', action: () => onShowResume?.() },
         { icon: TrendingUp, label: 'My Progress', action: () => onNavigate(ViewState.DASHBOARD) },
-        { icon: Award, label: 'Achievements', action: () => onNavigate(ViewState.DASHBOARD) },
         { icon: Settings, label: 'Settings', action: () => onNavigate(ViewState.ADMIN) },
     ];
 
