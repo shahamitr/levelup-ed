@@ -8,7 +8,8 @@ export enum ViewState {
   BOSS_FIGHT = 'BOSS_FIGHT',
   CELEBRATION = 'CELEBRATION',
   DASHBOARD = 'DASHBOARD',
-  ADMIN = 'ADMIN'
+  ADMIN = 'ADMIN',
+  USER_PROFILE = 'USER_PROFILE'
 }
 
 export interface LeagueUser {

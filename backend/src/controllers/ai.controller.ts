@@ -31,8 +31,10 @@ export const chatWithMentor = async (req: Request, res: Response) => {
         // Direct API call to Gemini (Models API) to avoid SDK version conflicts in this quick setup
         // POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=...
 
-        // We will use the REST API for maximum reliability without debugging SDK types in the "Blind" backend
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEN_AI_KEY}`, {
+        // We will use the REST API for maximum reliability.
+        // Updated to gemini-1.5-flash-001 as the alias might be resolving incorrectly.
+        const model = process.env.GEMINI_MODEL || 'gemini-1.5-flash-001';
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEN_AI_KEY}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -53,7 +55,7 @@ export const chatWithMentor = async (req: Request, res: Response) => {
 
         res.json({ reply });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server error processing AI request' });
+        console.error("AI Controller Error:", error);
+        res.status(500).json({ message: 'Server error processing AI request', details: String(error) });
     }
 };

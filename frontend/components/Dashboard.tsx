@@ -44,33 +44,34 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, courses }) => {
   };
 
   return (
-    <div className="p-16 max-w-7xl mx-auto space-y-16 animate-in fade-in">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-10">
+    <div className="p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <h2 className="text-8xl font-black text-white tracking-tighter uppercase italic leading-none">Career Analytics</h2>
-          <p className="text-slate-500 font-mono text-xs uppercase tracking-[0.4em] mt-5">SKILL GAP ANALYSIS // STUDENT {user.name.toUpperCase()}</p>
+          <h2 className="text-5xl font-black text-white tracking-tighter uppercase italic leading-none">Career Analytics</h2>
+          <p className="text-slate-400 font-mono text-[10px] uppercase tracking-[0.2em] mt-2 opacity-70">SKILL GAP ANALYSIS // STUDENT {user.name.toUpperCase()}</p>
         </div>
-        <div className="bg-slate-900/40 px-10 py-6 rounded-[3rem] border border-slate-800 backdrop-blur-3xl flex items-center space-x-8 shadow-2xl">
-          <Activity className="text-green-500 animate-pulse" size={40} />
+        <div className="bg-slate-900/40 px-6 py-4 rounded-3xl border border-slate-800 backdrop-blur-3xl flex items-center space-x-4 shadow-xl">
+          <Activity className="text-green-500 animate-pulse" size={24} />
           <div className="text-right">
-            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Engagement</p>
-            <p className="text-3xl font-bold text-white tracking-tighter">OPTIMAL</p>
+            <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Engagement</p>
+            <p className="text-xl font-bold text-white tracking-tighter">OPTIMAL</p>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
-        <StatCard icon={<Zap size={32} fill="currentColor" />} label="TOTAL XP" value={user.xp.toLocaleString()} color="text-indigo-400" />
-        <StatCard icon={<Award size={32} />} label="PROFICIENCY" value={user.level} color="text-yellow-400" />
-        <StatCard icon={<Flame size={32} fill="currentColor" />} label="DAY STREAK" value={`${user.streak} DAYS`} color="text-orange-500" />
-        <StatCard icon={<Target size={32} />} label="COMPLETION" value={`${masteryRatio}%`} color="text-green-400" />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+        <StatCard icon={<Zap size={20} fill="currentColor" />} label="TOTAL XP" value={user.xp.toLocaleString()} color="text-indigo-400" />
+        <StatCard icon={<Award size={20} />} label="PROFICIENCY" value={user.level} color="text-yellow-400" />
+        <StatCard icon={<Flame size={20} fill="currentColor" />} label="DAY STREAK" value={`${user.streak} DAYS`} color="text-orange-500" />
+        <StatCard icon={<Target size={20} />} label="COMPLETION" value={`${masteryRatio}%`} color="text-green-400" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
         {/* Radar Chart: Neural Profile */}
-        <div className="lg:col-span-4 bg-slate-900/30 border border-slate-800/40 p-12 rounded-[4rem] backdrop-blur-3xl shadow-2xl flex flex-col items-center">
-          <h3 className="text-2xl font-black text-white flex items-center uppercase italic mb-10 w-full">
-            <Brain className="mr-4 text-purple-500" /> Skill Profile
+        {/* Radar Chart: Neural Profile */}
+        <div className="lg:col-span-4 bg-slate-900/30 border border-slate-800/40 p-8 rounded-[2rem] backdrop-blur-3xl shadow-xl flex flex-col items-center">
+          <h3 className="text-lg font-black text-white flex items-center uppercase italic mb-6 w-full">
+            <Brain className="mr-3 text-purple-500" size={20} /> Skill Profile
           </h3>
           <div className="h-80 w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -84,9 +85,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, courses }) => {
         </div>
 
         {/* Main Line Chart: Focus Tracking */}
-        <div className="lg:col-span-8 bg-slate-900/30 border border-slate-800/40 p-12 rounded-[4rem] backdrop-blur-3xl shadow-2xl">
-          <h3 className="text-2xl font-black text-white flex items-center uppercase italic mb-16">
-            <TrendingUp className="mr-4 text-indigo-500" /> Learning Focus History
+        <div className="lg:col-span-8 bg-slate-900/30 border border-slate-800/40 p-8 rounded-[2rem] backdrop-blur-3xl shadow-xl">
+          <h3 className="text-lg font-black text-white flex items-center uppercase italic mb-6">
+            <TrendingUp className="mr-3 text-indigo-500" size={20} /> Learning Focus History
           </h3>
           <div className="h-80 w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -104,12 +105,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, courses }) => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
         {/* Inventory Gallery */}
-        <div className="bg-slate-900/30 border border-slate-800/40 p-12 rounded-[4rem] backdrop-blur-3xl">
-          <div className="flex items-center justify-between mb-12">
-            <h3 className="text-2xl font-black text-white flex items-center uppercase italic">
-              <Package className="mr-4 text-yellow-500" /> Equipment & Badges
+        <div className="bg-slate-900/30 border border-slate-800/40 p-8 rounded-[2rem] backdrop-blur-3xl">
+          <div className="flex items-center justify-between mb-8">
+            <h3 className="text-lg font-black text-white flex items-center uppercase italic">
+              <Package className="mr-3 text-yellow-500" size={20} /> Equipment & Badges
             </h3>
-            <span className="text-xs font-black text-slate-500 uppercase tracking-widest">{user.inventory.length} ITEMS</span>
+            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{user.inventory.length} ITEMS</span>
           </div>
           <div className="grid grid-cols-5 gap-6">
             {user.inventory.map(item => (
@@ -131,9 +132,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, courses }) => {
         </div>
 
         {/* Sector Mastery Chart */}
-        <div className="bg-slate-900/30 border border-slate-800/40 p-12 rounded-[4rem] backdrop-blur-3xl">
-          <h3 className="text-2xl font-black text-white flex items-center uppercase italic mb-12">
-            <TrendingUp className="mr-4 text-green-500" /> Course Progress
+        <div className="bg-slate-900/30 border border-slate-800/40 p-8 rounded-[2rem] backdrop-blur-3xl">
+          <h3 className="text-lg font-black text-white flex items-center uppercase italic mb-8">
+            <TrendingUp className="mr-3 text-green-500" size={20} /> Course Progress
           </h3>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -198,8 +199,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, courses }) => {
               <div
                 key={achievement.id}
                 className={`relative p-8 rounded-[2.5rem] border transition-all duration-500 ${isUnlocked
-                    ? `bg-slate-900/80 ${rarityColor} scale-100 opacity-100`
-                    : 'bg-slate-950/50 border-slate-800 text-slate-600 scale-95 opacity-60 grayscale'
+                  ? `bg-slate-900/80 ${rarityColor} scale-100 opacity-100`
+                  : 'bg-slate-950/50 border-slate-800 text-slate-600 scale-95 opacity-60 grayscale'
                   }`}
               >
                 <div className="flex items-start justify-between mb-4">
@@ -208,8 +209,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, courses }) => {
                   </div>
                   {isUnlocked && (
                     <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full border ${achievement.rarity === 'Legendary' ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-500'
-                        : achievement.rarity === 'Rare' ? 'bg-purple-500/10 border-purple-500/30 text-purple-400'
-                          : 'bg-indigo-500/10 border-indigo-500/30 text-indigo-400'
+                      : achievement.rarity === 'Rare' ? 'bg-purple-500/10 border-purple-500/30 text-purple-400'
+                        : 'bg-indigo-500/10 border-indigo-500/30 text-indigo-400'
                       }`}>
                       {achievement.rarity}
                     </span>
@@ -231,13 +232,13 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, courses }) => {
 };
 
 const StatCard = ({ icon, label, value, color }: { icon: any, label: string, value: any, color: string }) => (
-  <div className="bg-slate-900/50 border border-slate-800/50 p-12 rounded-[3.5rem] backdrop-blur-3xl shadow-2xl transition-all hover:scale-[1.03] group">
-    <div className={`flex items-center space-x-5 ${color} mb-8`}>
-      <div className="p-4 bg-white/5 rounded-3xl group-hover:scale-110 transition-transform">
+  <div className="bg-slate-900/50 border border-slate-800/50 p-6 rounded-3xl backdrop-blur-3xl shadow-lg transition-all hover:scale-[1.02] group">
+    <div className={`flex items-center space-x-3 ${color} mb-3`}>
+      <div className="p-2 bg-white/5 rounded-xl group-hover:scale-110 transition-transform">
         {icon}
       </div>
-      <span className="text-[10px] font-black uppercase tracking-[0.4em]">{label}</span>
+      <span className="text-[9px] font-black uppercase tracking-[0.2em] opacity-80">{label}</span>
     </div>
-    <p className="text-7xl font-black text-white tracking-tighter leading-none">{value}</p>
+    <p className="text-4xl font-black text-white tracking-tight leading-none">{value}</p>
   </div>
 );

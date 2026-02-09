@@ -24,7 +24,8 @@ export const generateLessonContent = async (worldName: string, level: number): P
     return response.data.reply;
   } catch (error) {
     console.error("Lesson Gen Error:", error);
-    return "## Connection Lost\nUnable to retrieve mission data. Please retry.";
+    const msg = (error as any)?.response?.data?.details?.message || (error as any)?.message || "Unknown Error";
+    return `## Connection Lost\nServer says: ${msg}\nPlease retry.`;
   }
 };
 

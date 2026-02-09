@@ -67,6 +67,20 @@ export class GeminiProvider implements AIProvider {
         });
 
         if (!response.ok) {
+            console.error(`Gemini API Error: ${response.status} ${response.statusText}`);
+
+            // EMERGENCY FALLBACK: Unblock user testing if Quota Exceeded
+            if (response.status === 429 || response.status === 403 || response.status === 503 || response.status === 500) {
+                console.warn("⚠️ QUOTA EXCEEDED / API ERROR: Switching to MOCK RESPONSE mode to allow testing.");
+                const lastMsg = request.messages.length > 0 ? request.messages[request.messages.length - 1].content : "No input";
+                return {
+                    content: `[SYSTEM: AI QUOTA EXCEEDED - MOCK MODE ACTIVE]\n\nI am a simulated AI mentor. I see you asked: "${lastMsg.substring(0, 50)}..."\n\nSince the real AI is taking a nap (quota limit), I'm here to let you continue testing the application flow. You can proceed to the next step, create a new world, or chat with me (I will just echo things back).`,
+                    provider: 'gemini-mock',
+                    tokensUsed: 0,
+                    model: 'mock-fallback-v1'
+                };
+            }
+
             const error = await response.json();
             throw new Error(`Gemini API error: ${error.error?.message || response.statusText}`);
         }

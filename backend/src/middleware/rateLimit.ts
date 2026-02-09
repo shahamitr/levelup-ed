@@ -25,13 +25,13 @@ export const rateLimitConfigs = {
   // Strict for auth endpoints (prevent brute force)
   auth: {
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 5,                    // 5 attempts per window
+    max: 10,                   // 10 attempts per window
     message: 'Too many login attempts. Please try again in 15 minutes.'
   },
   // Moderate for API endpoints
   api: {
     windowMs: 60 * 1000,       // 1 minute
-    max: 100,                  // 100 requests per minute
+    max: 300,                  // 300 requests per minute
     message: 'Too many requests. Please slow down.'
   },
   // Strict for sensitive operations
@@ -45,8 +45,8 @@ export const rateLimitConfigs = {
 // Rate limiting middleware factory
 export const rateLimit = (options: RateLimitOptions) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    const key = options.keyGenerator 
-      ? options.keyGenerator(req) 
+    const key = options.keyGenerator
+      ? options.keyGenerator(req)
       : getClientIdentifier(req);
 
     const now = Date.now();
@@ -58,7 +58,7 @@ export const rateLimit = (options: RateLimitOptions) => {
         count: 1,
         resetTime: now + options.windowMs
       });
-      
+
       setRateLimitHeaders(res, options.max, options.max - 1, now + options.windowMs);
       return next();
     }
@@ -66,10 +66,10 @@ export const rateLimit = (options: RateLimitOptions) => {
     if (record.count >= options.max) {
       // Rate limit exceeded
       const retryAfter = Math.ceil((record.resetTime - now) / 1000);
-      
+
       res.set('Retry-After', String(retryAfter));
       setRateLimitHeaders(res, options.max, 0, record.resetTime);
-      
+
       return res.status(429).json({
         message: options.message || 'Too many requests',
         retryAfter
@@ -79,7 +79,7 @@ export const rateLimit = (options: RateLimitOptions) => {
     // Increment counter
     record.count++;
     setRateLimitHeaders(res, options.max, options.max - record.count, record.resetTime);
-    
+
     next();
   };
 };
@@ -93,9 +93,9 @@ const getClientIdentifier = (req: Request): string => {
 
 // Set standard rate limit headers
 const setRateLimitHeaders = (
-  res: Response, 
-  limit: number, 
-  remaining: number, 
+  res: Response,
+  limit: number,
+  remaining: number,
   resetTime: number
 ) => {
   res.set({

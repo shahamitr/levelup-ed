@@ -28,19 +28,25 @@ export const WorldPath: React.FC<WorldPathProps> = ({ world, completedLevels, on
     };
 
     return (
-        <div className="relative w-full max-w-md mx-auto h-[600px] bg-slate-900/50 rounded-[3rem] border border-slate-800 shadow-2xl overflow-hidden backdrop-blur-xl">
+        <div className="relative w-full max-w-lg mx-auto h-[550px] bg-slate-900/40 rounded-3xl border border-slate-700/50 shadow-xl overflow-hidden backdrop-blur-md hover:border-slate-600 transition-colors">
             {/* Background Ambience */}
             <div className={`absolute inset-0 bg-gradient-to-b from-${world.primaryColor.split('-')[1]}-900/20 to-slate-950`}></div>
             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
 
             {/* Header */}
-            <div className="absolute top-0 left-0 w-full p-6 text-center z-20 bg-gradient-to-b from-slate-950 to-transparent">
-                <h2 className={`text-2xl font-black uppercase tracking-tighter ${world.primaryColor}`}>{world.name}</h2>
-                <p className="text-[10px] text-slate-500 font-mono tracking-widest uppercase">{completedLevels.length} / {world.totalLevels} COMPLETED</p>
+            <div className="absolute top-0 left-0 w-full p-6 text-center z-20 bg-gradient-to-b from-slate-950/80 to-transparent">
+                <h2 className={`text-xl font-bold tracking-tight text-white/90`}>{world.name}</h2>
+                <div className="flex items-center justify-center gap-2 mt-2">
+                    <div className="h-1 w-12 bg-slate-700 rounded-full overflow-hidden">
+                        <div className={`h-full ${world.primaryColor.replace('text', 'bg')} w-[${completedLevels.length / world.totalLevels * 100}%]`}></div>
+                    </div>
+                    <p className="text-[10px] text-slate-400 font-medium tracking-wide uppercase">{completedLevels.length}/{world.totalLevels} Modules</p>
+                </div>
             </div>
 
             {/* Path SVG */}
-            <svg className="absolute inset-0 w-full h-full pointer-events-none z-0">
+            {/* Path SVG */}
+            <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" viewBox="0 0 100 100" preserveAspectRatio="none">
                 <defs>
                     <linearGradient id="pathGradient" x1="0%" y1="0%" x2="0%" y2="100%">
                         <stop offset="0%" stopColor={world.primaryColor.includes('indigo') ? '#6366f1' : '#22c55e'} stopOpacity="0.8" />
@@ -48,24 +54,13 @@ export const WorldPath: React.FC<WorldPathProps> = ({ world, completedLevels, on
                     </linearGradient>
                 </defs>
                 <path
-                    d="M 50% 85% Q 10% 80% 30% 70% T 50% 55% T 70% 40% T 50% 25% L 50% 10%"
+                    d="M 50 85 Q 10 80 30 70 T 50 55 T 70 40 T 50 25 L 50 10"
                     stroke="url(#pathGradient)"
-                    strokeWidth="8"
+                    strokeWidth="2"
                     fill="none"
                     strokeLinecap="round"
                     className="drop-shadow-[0_0_10px_rgba(99,102,241,0.5)]"
-                    style={{ vectorEffect: 'non-scaling-stroke' }} // Attempt to make it responsive
-                />
-                {/* Simple straight lines fallback if curves fail to scale in regular div */}
-                {/* Note: The d attribute above is pseudo-code for % based coords which SVG doesn't strictly support without viewBox.
-             For simplicity in this specific "fixed size" container, we'll assume the container 100% matches a coordinate system or keep it visual.
-             Actually, better implementation: */}
-                <path
-                    d="M 200 510 C 100 510 50 450 120 420 S 280 380 280 330 S 150 280 200 240 S 300 180 200 150 L 200 60"
-                    stroke="currentColor"
-                    strokeWidth="12"
-                    className={`${world.primaryColor.replace('text', 'text')}/20`}
-                    fill="none"
+                    vectorEffect="non-scaling-stroke"
                 />
             </svg>
 
@@ -85,11 +80,11 @@ export const WorldPath: React.FC<WorldPathProps> = ({ world, completedLevels, on
                         <button
                             onClick={() => !isLocked && onStartLevel(level)}
                             disabled={isLocked}
-                            className={`w-20 h-20 rounded-full flex items-center justify-center border-4 shadow-[0_10px_30px_rgba(0,0,0,0.5)] transition-all duration-300 transform ${isCompleted
-                                    ? 'bg-yellow-500 border-yellow-300 hover:scale-105'
-                                    : isCurrent
-                                        ? `bg-${world.primaryColor.split('-')[1]}-600 border-white/50 animate-bounce-slow shadow-[0_0_30px_currentColor]`
-                                        : 'bg-slate-800 border-slate-700 grayscale opacity-60 cursor-not-allowed'
+                            className={`w-16 h-16 rounded-2xl flex items-center justify-center border-2 shadow-lg transition-all duration-300 transform ${isCompleted
+                                ? 'bg-yellow-500/20 border-yellow-500 hover:scale-105'
+                                : isCurrent
+                                    ? `bg-${world.primaryColor.split('-')[1]}-600 border-white shadow-[0_0_20px_currentColor]`
+                                    : 'bg-slate-800 border-slate-700 opacity-60'
                                 }`}
                         >
                             {isCompleted ? (
@@ -97,7 +92,7 @@ export const WorldPath: React.FC<WorldPathProps> = ({ world, completedLevels, on
                             ) : isLocked ? (
                                 <Lock size={24} className="text-slate-500" />
                             ) : (
-                                <span className="text-3xl font-black text-white italic">{level}</span>
+                                <span className="text-lg font-bold text-white">{level}</span>
                             )}
 
                             {/* Stars Decoration */}
@@ -112,8 +107,8 @@ export const WorldPath: React.FC<WorldPathProps> = ({ world, completedLevels, on
 
                         {/* Level Label */}
                         {isCurrent && (
-                            <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-white text-slate-900 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg whitespace-nowrap animate-in fade-in slide-in-from-top-2">
-                                Start Level {level}
+                            <div className="absolute top-full mt-3 left-1/2 -translate-x-1/2 bg-white text-slate-950 px-4 py-1.5 rounded-full text-xs font-bold tracking-wide shadow-xl whitespace-nowrap animate-in fade-in slide-in-from-top-2">
+                                Start Module {level}
                             </div>
                         )}
                     </div>
@@ -126,8 +121,8 @@ export const WorldPath: React.FC<WorldPathProps> = ({ world, completedLevels, on
                     onClick={onBossFight}
                     disabled={!isBossUnlocked}
                     className={`w-24 h-24 rounded-[2rem] flex items-center justify-center border-4 transition-all duration-500 ${isBossUnlocked
-                            ? 'bg-red-600 border-red-400 animate-pulse hover:scale-110 shadow-[0_0_50px_rgba(220,38,38,0.6)]'
-                            : 'bg-slate-900 border-slate-800 grayscale opacity-40 cursor-not-allowed'
+                        ? 'bg-red-600 border-red-400 animate-pulse hover:scale-110 shadow-[0_0_50px_rgba(220,38,38,0.6)]'
+                        : 'bg-slate-900 border-slate-800 grayscale opacity-40 cursor-not-allowed'
                         }`}
                 >
                     <Trophy size={40} fill={isBossUnlocked ? "white" : "none"} className={isBossUnlocked ? 'text-white' : 'text-slate-600'} />

@@ -12,6 +12,7 @@ const api = axios.create({
 
 // Request interceptor to add JWT token
 api.interceptors.request.use((config) => {
+    // console.log(`[API REQUEST] ${config.method?.toUpperCase()} ${config.url}`);
     const userStr = localStorage.getItem('leveluped_state_v1');
     if (userStr) {
         // Note: In a real app we would store token separately.
@@ -20,10 +21,23 @@ api.interceptors.request.use((config) => {
         const token = localStorage.getItem('token');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
+        } else {
+            console.warn("[API] No token found in localStorage");
         }
     }
     return config;
-}, (error) => Promise.reject(error));
+}, (error) => {
+    console.error("[API REQUEST ERROR]", error);
+    return Promise.reject(error);
+});
+
+api.interceptors.response.use(
+    response => response,
+    error => {
+        console.error(`[API ERROR] ${error.config?.url}:`, error.response?.data || error.message);
+        return Promise.reject(error);
+    }
+);
 
 export const authService = {
     login: (email: string, password: string) => api.post('/auth/login', { email, password }),

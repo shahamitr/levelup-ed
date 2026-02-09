@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "seed": "bun run prisma/seed.ts",
-    "dev": "bun run --watch index.ts"
+    "dev": "bun run --watch src/server.ts"
   },
   "prisma": {
     "seed": "bun run prisma/seed.ts"

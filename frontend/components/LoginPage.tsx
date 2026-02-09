@@ -7,9 +7,10 @@ import { authService } from '../services/api';
 
 interface LoginPageProps {
   onLogin: (user: any) => void;
+  onBack: () => void;
 }
 
-export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
+export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack }) => {
   const [isRegister, setIsRegister] = useState(false);
   const [name, setName] = useState(''); // Username
   const [email, setEmail] = useState('');
@@ -52,6 +53,12 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
       {/* Ambient Background */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-indigo-950/40 via-slate-950 to-slate-950 z-0"></div>
       <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 z-0 mix-blend-overlay"></div>
+
+      {/* Back Button */}
+      <button onClick={onBack} className="absolute top-8 left-8 z-50 text-slate-500 hover:text-white transition-colors flex items-center space-x-2 font-black uppercase tracking-widest text-xs">
+        <ArrowRight className="rotate-180" size={16} />
+        <span>Back to Landing</span>
+      </button>
 
       <div className="relative z-10 w-full max-w-lg">
         {/* Logo */}
