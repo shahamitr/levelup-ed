@@ -27,8 +27,8 @@ export const DailyLoginModal: React.FC<DailyLoginModalProps> = ({ onClose, onCla
     }, []);
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-md pointer-events-none">
-            <div className="bg-slate-900 border border-indigo-500/30 w-full max-w-lg rounded-[2.5rem] p-8 shadow-[0_0_50px_rgba(79,70,229,0.3)] relative overflow-hidden pointer-events-auto">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-md animate-in fade-in duration-300" onClick={onClose}>
+            <div className="bg-slate-900 border border-indigo-500/30 w-full max-w-lg rounded-[2.5rem] p-8 shadow-[0_0_50px_rgba(79,70,229,0.3)] relative overflow-hidden" onClick={(e) => e.stopPropagation()}>
 
                 {/* Decorative Background */}
                 <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-indigo-500/20 to-transparent pointer-events-none"></div>

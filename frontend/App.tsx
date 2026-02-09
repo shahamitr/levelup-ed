@@ -238,9 +238,9 @@ const App = () => {
   const [showDailyReward, setShowDailyReward] = useState(false);
 
   useEffect(() => {
-    // Only check on HOME or WORLD_MAP and if user is logged in (skip for Admin)
+    // Only check on HOME and if user is logged in (skip for Admin)
     const isAdmin = user.name.toLowerCase().includes('admin');
-    if ((view === ViewState.HOME || view === ViewState.WORLD_MAP) && user.name !== 'Incognito' && !isAdmin) {
+    if (view === ViewState.HOME && user.name !== 'Incognito' && !isAdmin) {
       const today = new Date().toDateString();
       const lastClaim = localStorage.getItem('leveluped_daily_claim');
 
@@ -248,8 +248,7 @@ const App = () => {
         // Delay slightly for effect
         const timer = setTimeout(() => {
           setShowDailyReward(true);
-          playSound('success');
-        }, 1500);
+        }, 2000);
         return () => clearTimeout(timer);
       }
     }
@@ -627,15 +626,6 @@ const App = () => {
           </nav>
 
           <div className="flex items-center space-x-12">
-            <div className="hidden sm:flex flex-col items-end">
-              <div className="flex items-center space-x-4 mb-2">
-                <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest bg-indigo-500/10 px-3 py-1 rounded-full">Level {user.level}</span>
-                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{user.xp.toLocaleString()} XP</span>
-              </div>
-              <div className="w-56 h-3 bg-slate-900 rounded-full overflow-hidden border border-slate-800 shadow-inner">
-                <div className="h-full bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-400 transition-all duration-1000" style={{ width: `${(user.xp % 1000) / 10}%` }}></div>
-              </div>
-            </div>
 
             {/* Gamification HUD */}
             <div className="flex items-center space-x-6 mr-8">
